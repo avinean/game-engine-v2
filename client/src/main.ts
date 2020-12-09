@@ -1,4 +1,6 @@
-import { Application, utils, Sprite } from 'pixi.js';
+"use strict";
+
+import {Application, utils, Sprite, Rectangle, BaseTexture, Texture} from 'pixi.js';
 
 const styles = `
 <style>
@@ -10,35 +12,63 @@ const styles = `
 </style>
 `;
 document.body.innerHTML += styles;
-
-// The application will create a renderer using WebGL, if possible,
-// with a fallback to a canvas render. It will also setup the ticker
-// and the root stage PIXI.Container
 const app: Application = new Application();
 app.renderer.view.style.position = "absolute";
 app.renderer.view.style.display = "block";
-// app.renderer.autoResize = true;
 app.renderer.resize(window.innerWidth, window.innerHeight);
 
-// The application will create a canvas element for you that you
-// can then insert into the DOM
 document.body.appendChild(app.view);
 
+// app.loader
+//     .add("../src/assets/images/main.jpg")
+//     .load(() => {
+//         const testBG = new Sprite(
+//             app.loader.resources["../src/assets/images/main.jpg"].texture
+//         );
+//
+//
+//         app.stage.addChild(testBG);
+//     });
+//
+// app.loader.onProgress.once((loader, resource) => {
+//     // resources loading
+//     console.log(loader, resource)
+//     console.log("loading: " + resource.url);
+//     console.log("progress: " + loader.progress + "%");
+//     console.log("loading: " + resource.name);
+// });
+//
+const TILE_SET = 'TILE_SET';
+
 app.loader
-    .add("../src/assets/images/main.jpg")
-    .load(() => {
-        const testBG = new Sprite(
-            app.loader.resources["../src/assets/images/main.jpg"].texture
-        );
-
-
-        app.stage.addChild(testBG);
-    });
-
-app.loader.onProgress.once((loader, resource) => {
-    // resources loading
-    console.log(loader, resource)
-    console.log("loading: " + resource.url);
-    console.log("progress: " + loader.progress + "%");
-    console.log("loading: " + resource.name);
+.add(TILE_SET, '../src/assets/images/tileset.png')
+.load(function setup(loader, resources) {
+    renderRocket();
+    renderStar();
 });
+
+function renderRocket() {
+    const texture = new Texture(
+        app.loader.resources[TILE_SET].texture.baseTexture,
+        new Rectangle(96,64,32,32)
+    );
+
+    const  rocket = new Sprite(texture);
+    rocket.x = 32;
+    rocket.y = 32;
+
+    app.stage.addChild(rocket);
+}
+
+function renderStar() {
+    const texture = new Texture(
+        app.loader.resources[TILE_SET].texture.baseTexture,
+        new Rectangle(0,128,32,32)
+    );
+
+    const  star = new Sprite(texture);
+    star.x = 32;
+    star.y = 96;
+
+    app.stage.addChild(star);
+}

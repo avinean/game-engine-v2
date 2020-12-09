@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
@@ -20,7 +21,10 @@ module.exports = {
     path: path.resolve(__dirname, '../dist'),
   },
   plugins: [
-    new HtmlWebpackPlugin()
+    new HtmlWebpackPlugin(),
+    new webpack.ProvidePlugin({
+      PIXI: 'pixi.js'
+    })
   ],
   watch: true,
   watchOptions: {
