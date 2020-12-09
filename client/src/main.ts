@@ -30,5 +30,15 @@ app.loader
         const testBG = new Sprite(
             app.loader.resources["../src/assets/images/main.jpg"].texture
         );
+
+
         app.stage.addChild(testBG);
-    })
+    });
+
+app.loader.onProgress.once((loader, resource) => {
+    // resources loading
+    console.log(loader, resource)
+    console.log("loading: " + resource.url);
+    console.log("progress: " + loader.progress + "%");
+    console.log("loading: " + resource.name);
+});
