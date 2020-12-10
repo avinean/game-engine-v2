@@ -38,37 +38,57 @@ document.body.appendChild(app.view);
 //     console.log("loading: " + resource.name);
 // });
 //
-const TILE_SET = 'TILE_SET';
+
+
+
+// const TILE_SET = 'TILE_SET';
+
+// app.loader
+// .add(TILE_SET, '../src/assets/images/tileset.png')
+// .load(function setup(loader, resources) {
+//     renderRocket();
+//     renderStar();
+// });
+
+// function renderRocket() {
+//     const texture = new Texture(
+//         app.loader.resources[TILE_SET].texture.baseTexture,
+//         new Rectangle(96,64,32,32)
+//     );
+
+//     const  rocket = new Sprite(texture);
+//     rocket.x = 32;
+//     rocket.y = 32;
+
+//     app.stage.addChild(rocket);
+// }
+
+// function renderStar() {
+//     const texture = new Texture(
+//         app.loader.resources[TILE_SET].texture.baseTexture,
+//         new Rectangle(0,128,32,32)
+//     );
+
+//     const  star = new Sprite(texture);
+//     star.x = 32;
+//     star.y = 96;
+
+//     app.stage.addChild(star);
+// }
+
+const FRUITS_IMAGES = 'FRUITS_IMAGES';
 
 app.loader
-.add(TILE_SET, '../src/assets/images/tileset.png')
-.load(function setup(loader, resources) {
-    renderRocket();
-    renderStar();
+.add(FRUITS_IMAGES, '../src/assets/images/fruits.json')
+.load(() => {
+    Object
+    .values(app.loader.resources[FRUITS_IMAGES].textures)
+    .forEach((texture: Texture, i) => {
+        console.log(texture);
+        const sprite = new Sprite(texture);
+        sprite.x = i * 128;
+        sprite.y = i * 128;
+
+        app.stage.addChild(sprite);
+    })
 });
-
-function renderRocket() {
-    const texture = new Texture(
-        app.loader.resources[TILE_SET].texture.baseTexture,
-        new Rectangle(96,64,32,32)
-    );
-
-    const  rocket = new Sprite(texture);
-    rocket.x = 32;
-    rocket.y = 32;
-
-    app.stage.addChild(rocket);
-}
-
-function renderStar() {
-    const texture = new Texture(
-        app.loader.resources[TILE_SET].texture.baseTexture,
-        new Rectangle(0,128,32,32)
-    );
-
-    const  star = new Sprite(texture);
-    star.x = 32;
-    star.y = 96;
-
-    app.stage.addChild(star);
-}
