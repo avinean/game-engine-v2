@@ -13,6 +13,20 @@ interface MovingSettings {
     y: number;
 }
 
+enum Quaters {
+    First = 1,
+    Second = 2,
+    Third = 3,
+    Forth = 4
+}
+
+enum Borders {
+    Top = 1,
+    Right = 2,
+    Bottom = 3,
+    Left = 4
+}
+
 export default class Circle {
     app: Application;
     options: Options;
@@ -20,8 +34,8 @@ export default class Circle {
     movingSettings: MovingSettings = {
         x: 0,
         y: 0,
-        velocity: 3,
-        angle: Math.PI * Math.random()
+        velocity: 1,
+        angle: 2 * Math.PI * Math.random()
     };
 
     mount(app: Application, options: Options): Circle {
@@ -33,7 +47,7 @@ export default class Circle {
     }
 
     init(): void {
-        this.calculateMovingSettings(Math.random() * Math.PI);
+        this.calculateMovingSettings(this.movingSettings.angle);
         this.initMoving();
     }
 
@@ -53,8 +67,6 @@ export default class Circle {
         this.circle.height = size;
         this.circle.anchor.set(.5, .5);
 
-        console.log(this.circle);
-
         this.app.stage.addChild(this.circle);
     }
 
@@ -68,16 +80,11 @@ export default class Circle {
         })
     }
 
-    calculateMovingSettings(a: number): void {
-        const { fullAngle: angle, pureAngle } = this.normalizeAngle(a);
-        const { horizontal, vertical } = this.getSignsByAngle(angle);
+    calculateMovingSettings(angle: number): void {
         const { velocity } = this.movingSettings;
 
-        let x = Math.sin(pureAngle) * velocity;
-        let y = Math.cos(pureAngle) * velocity;
-
-        if (!horizontal)    x = 0 - x;
-        if (!vertical)      y = 0 -y;
+        let x = Math.sin(angle) * velocity;
+        let y = -1 * Math.cos(angle) * velocity;
 
         this.movingSettings = {
             ...this.movingSettings,
@@ -85,46 +92,62 @@ export default class Circle {
         }
     }
 
-    normalizeAngle(angle: number): { fullAngle: number, pureAngle: number} {
-        const fullAngle = angle - ( Math.floor( angle / Math.PI ) * Math.PI);
-        let pureAngle: number;
-
-        if      (fullAngle < (Math.PI / 4))     pureAngle = fullAngle;
-        else if (fullAngle < (Math.PI / 2))     pureAngle = Math.PI * 2 - fullAngle;
-        else if (fullAngle < (Math.PI / 4 * 3)) pureAngle = fullAngle - Math.PI * 2;
-        else if (fullAngle < Math.PI)           pureAngle = Math.PI - fullAngle;
-
-        return {
-            fullAngle,
-            pureAngle
-        };
-    }
-
-    getSignsByAngle(angle: number): { horizontal: boolean; vertical: boolean; } {
-        let horizontal: boolean, vertical: boolean;
-
-        horizontal = (angle >= 0) && (angle <= (Math.PI / 2));
-        vertical = !((angle >= (Math.PI / 4)) && (angle <= (Math.PI * 3 / 4)));
-
-        return { horizontal, vertical };
-    }
-
     checkColission(): void {
-        const { innerHeight, innerWidth } = window;
-        const { x: cx, y: cy, width, height } = this.circle;
-        const { x, y } = this.movingSettings;
+        const { PI } = Math;
+        let { angle } = this.movingSettings;
+        let quater: Quaters = this.quater;
+        let border: Borders = this.border;
         
-        if (
-           cx + width / 2 > innerWidth ||
-           cx - width / 2 < 0 || 
-           cy + height / 2 > innerHeight ||
-           cy - height / 2 < 0 
-        ) {
-            this.movingSettings = {
-                ...this.movingSettings,
-                x: 0 - x,
-                y: 0 - y
-            }
+        switch (border) {
+            case Borders.Top:
+            case Borders.Bottom:
+                switch (quater) {
+                    case Quaters.First:
+                    case Quaters.Second:
+                        return this.calculateMovingSettings(PI - angle);
+                    case Quaters.Forth:
+                    case Quaters.Third:
+                        return this.calculateMovingSettings(3 * PI - angle);
+                }
+            case Borders.Right:
+            case Borders.Left:
+                return this.calculateMovingSettings(2 * PI - angle);
         }
     }
+
+    get quater(): Quaters {
+        const { PI } = Math;
+        const { angle } = this.movingSettings;
+        if (angle >= 0 && angle <= PI / 2) {
+            return Quaters.First;
+        }
+        else if (angle >= PI / 2 && angle <= PI) {
+            return Quaters.Second;
+        }
+        else if (angle >= PI && angle <= PI * 4 / 3) {
+            return Quaters.Third;
+        }
+        else if (angle >= PI * 4 / 3 && angle <= PI * 2) {
+            return Quaters.Forth;
+        }
+    }
+
+    get border(): Borders {
+        const { innerHeight, innerWidth } = window;
+        const { x: cx, y: cy, width, height } = this.circle;
+                
+        if (cx + width / 2 > innerWidth) {
+            return Borders.Right
+        }
+        else if (cx - width / 2 < 0) {
+            return Borders.Left
+        }
+        else if (cy + height / 2 > innerHeight) {
+            return Borders.Bottom
+        }
+        else if (cy - height / 2 < 0) {
+            return Borders.Top
+        }
+    }
+
 }
