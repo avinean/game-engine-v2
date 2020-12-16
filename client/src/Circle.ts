@@ -1,5 +1,5 @@
-import { Application, Sprite } from "pixi.js";
-import { CIRCLE_TEXTURE } from './constants';
+import { Application, Graphics } from 'pixi.js';
+import WatchableInterface from './models/WatchableInterface';
 
 interface Options {
     x: number;
@@ -11,9 +11,10 @@ interface MovingSettings {
     angle: number;
     x: number;
     y: number;
+    color: number;
 }
 
-enum Quaters {
+enum Quarters {
     First = 1,
     Second = 2,
     Third = 3,
@@ -27,18 +28,19 @@ enum Borders {
     Left = 4
 }
 
-export default class Circle {
-    app: Application;
-    options: Options;
-    circle: Sprite;
-    movingSettings: MovingSettings = {
+export default class Circle implements WatchableInterface{
+    private app: Application;
+    private options: Options;
+    private circle: Graphics;
+    private movingSettings: MovingSettings = {
         x: 0,
         y: 0,
         velocity: 1,
-        angle: 2 * Math.PI * Math.random()
+        angle: 2 * Math.PI * Math.random(),
+        color: this.randomColor
     };
 
-    mount(app: Application, options: Options): Circle {
+    public mount(app: Application, options: Options): Circle {
         this.app = app;
         this.options = options;
         this.createCircle();
@@ -46,9 +48,11 @@ export default class Circle {
         return this;
     }
 
-    init(): void {
+    public init(): Circle {
         this.calculateMovingSettings(this.movingSettings.angle);
         this.initMoving();
+
+        return this;
     }
 
     private createCircle(): void {
@@ -58,14 +62,14 @@ export default class Circle {
         if ( y + size > innerHeight ) {
             y = (innerHeight - size) / 2;
         }
+        const radius = size / 2;
 
-        this.circle = new Sprite(
-            this.app.loader.resources[CIRCLE_TEXTURE].texture
-        );
-        this.circle.position.set(x + size / 2, y + size / 2);
-        this.circle.width = size;
-        this.circle.height = size;
-        this.circle.anchor.set(.5, .5);
+        this.circle = new Graphics();
+        this.circle.beginFill(this.movingSettings.color);
+        this.circle.drawCircle(0, 0, radius);
+        this.circle.endFill();
+        this.circle.x = x + radius;
+        this.circle.y = y + radius;
 
         this.app.stage.addChild(this.circle);
     }
@@ -76,66 +80,77 @@ export default class Circle {
             this.circle.x += x;
             this.circle.y += y;
 
-            this.checkColission();
+            this.circle.fill.color = this.movingSettings.color;
+
+            this.checkCollision();
         })
     }
 
-    calculateMovingSettings(angle: number): void {
+    private calculateMovingSettings(angle: number): void {
         const { velocity } = this.movingSettings;
 
-        let x = Math.sin(angle) * velocity;
-        let y = -1 * Math.cos(angle) * velocity;
+        const x = Math.sin(angle) * velocity;
+        const y = -1 * Math.cos(angle) * velocity;
+        const color = this.randomColor;
 
         this.movingSettings = {
             ...this.movingSettings,
-            angle, x, y
+            angle, x, y, color
         }
     }
 
-    checkColission(): void {
+    private checkCollision(): void {
         const { PI } = Math;
-        let { angle } = this.movingSettings;
-        let quater: Quaters = this.quater;
-        let border: Borders = this.border;
-        
+        const { angle } = this.movingSettings;
+        const quarter: Quarters = this.quarter;
+        const border: Borders = this.border;
+
         switch (border) {
             case Borders.Top:
             case Borders.Bottom:
-                switch (quater) {
-                    case Quaters.First:
-                    case Quaters.Second:
+                switch (quarter) {
+                    case Quarters.First:
+                    case Quarters.Second:
                         return this.calculateMovingSettings(PI - angle);
-                    case Quaters.Forth:
-                    case Quaters.Third:
+                    case Quarters.Forth:
+                    case Quarters.Third:
                         return this.calculateMovingSettings(3 * PI - angle);
                 }
+                return;
             case Borders.Right:
             case Borders.Left:
                 return this.calculateMovingSettings(2 * PI - angle);
         }
     }
 
-    get quater(): Quaters {
+    onCollision(angle: number) {
+    }
+
+    private get randomColor(): number {
+        return Math.random() * 0xFFFFFF;
+    }
+
+    private get quarter(): Quarters {
         const { PI } = Math;
         const { angle } = this.movingSettings;
         if (angle >= 0 && angle <= PI / 2) {
-            return Quaters.First;
+            return Quarters.First;
         }
         else if (angle >= PI / 2 && angle <= PI) {
-            return Quaters.Second;
+            return Quarters.Second;
         }
         else if (angle >= PI && angle <= PI * 4 / 3) {
-            return Quaters.Third;
+            return Quarters.Third;
         }
         else if (angle >= PI * 4 / 3 && angle <= PI * 2) {
-            return Quaters.Forth;
+            return Quarters.Forth;
         }
     }
 
-    get border(): Borders {
+    private get border(): Borders {
         const { innerHeight, innerWidth } = window;
         const { x: cx, y: cy, width, height } = this.circle;
-                
+
         if (cx + width / 2 > innerWidth) {
             return Borders.Right
         }
@@ -150,4 +165,8 @@ export default class Circle {
         }
     }
 
+    public get coordinates() {
+        const { x, y } = this.movingSettings;
+        return { x, y };
+    }
 }

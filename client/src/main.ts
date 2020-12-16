@@ -1,13 +1,14 @@
 "use strict";
 
 import {
-    Application, 
-    Sprite, 
+    Application,
+    Sprite,
     Texture,
     Text, TextStyle
 } from 'pixi.js';
 import { CIRCLE_TEXTURE } from './constants';
 import Circle from './Circle';
+import CollisionWatcher from './CollisionWatcher';
 
 const styles = `
 <style>
@@ -31,19 +32,20 @@ document.body.appendChild(app.view);
 app.loader
 .add(CIRCLE_TEXTURE, '../src/assets/images/circle.png')
 .load(() => {
-    const count = 10;
+    const count = 3;
     const size = window.innerWidth / count;
+    const circlesList: Circle[] = [];
     for(let i = 0; i < count; i++) {
-        new Circle()
-            .mount(
-                app,
-                {
-                    size,
-                    x: size * i
-                }
-            )
-            .init();
+        circlesList.push(new Circle().mount(
+            app,
+            {
+                size,
+                x: size * i
+            }
+        ).init());
     }
+
+    new CollisionWatcher().watch(circlesList);
 });
 
 
