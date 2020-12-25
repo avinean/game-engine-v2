@@ -1,1 +1,0 @@
-export const CIRCLE_TEXTURE = 'CIRCLE_TEXTURE';

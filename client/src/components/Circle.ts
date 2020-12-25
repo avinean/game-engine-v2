@@ -1,5 +1,4 @@
 import { Application, Graphics } from 'pixi.js';
-import WatchableInterface from './models/WatchableInterface';
 
 interface Options {
     x: number;
@@ -28,13 +27,13 @@ enum Borders {
     Left = 4
 }
 
-export default class Circle implements WatchableInterface{
+export default class Circle {
     private app: Application;
     private options: Options;
     private circle: Graphics;
     private movingSettings: MovingSettings = {
-        x: 0,
-        y: 0,
+        x: Math.random() * 10 + 2,
+        y: Math.random() * 10 + 2,
         velocity: 1,
         angle: 2 * Math.PI * Math.random(),
         color: this.randomColor
@@ -49,7 +48,7 @@ export default class Circle implements WatchableInterface{
     }
 
     public init(): Circle {
-        this.calculateMovingSettings(this.movingSettings.angle);
+        // this.calculateMovingSettings(this.movingSettings.angle);
         this.initMoving();
 
         return this;
@@ -76,13 +75,29 @@ export default class Circle implements WatchableInterface{
 
     private initMoving() {
         this.app.ticker.add(() => {
+
+            switch (this.border) {
+                case Borders.Right:
+                case Borders.Left:
+                    this.movingSettings.x *= -1;
+                    break;
+                case Borders.Top:
+                case Borders.Bottom:
+                    this.movingSettings.y *= -1;
+                    break;
+                
+            }
+
             const { x, y } = this.movingSettings;
+
             this.circle.x += x;
             this.circle.y += y;
 
-            this.circle.fill.color = this.movingSettings.color;
+            
 
-            this.checkCollision();
+            // this.circle.fill.color = this.movingSettings.color;
+
+            // this.checkCollision();
         })
     }
 

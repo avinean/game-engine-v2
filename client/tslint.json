@@ -7,5 +7,13 @@
     "rules": {
         "no-console": [ false ]
     },
-    "rulesDirectory": []
+    "rulesDirectory": [],
+    "include": [
+        "**/*",
+        "**/*"
+    ],
+    "exclude": [
+        "node_modules",
+        "**/*.spec.ts"
+    ]
 }
