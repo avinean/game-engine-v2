@@ -17,7 +17,7 @@ new Engine<ScenesEnum, AssetsEnum>({
     ],
     normalizeScreen: true,
     assets: [
-        [AssetsEnum.MainBG, '../src/assets/images/main.jpg']
+        { name: AssetsEnum.MainBG, url: '../src/assets/images/main.jpg'}
     ],
     onInit(engine) {
     }

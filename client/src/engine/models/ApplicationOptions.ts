@@ -6,6 +6,6 @@ export default interface ApplicationOptions<S extends string, A extends string> 
     applicationsConfig?: ApplicationConfig;
     scenes?: SceneConfig<S, A>[];
     normalizeScreen?: boolean;
-    assets?: [A, string][];
+    assets?: { name: A, url: string }[];
     onInit?: (engine: Engine<S, A>) => void;
 }

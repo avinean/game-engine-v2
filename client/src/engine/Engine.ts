@@ -25,9 +25,7 @@ export default class Engine<S extends string, A extends string> {
 
         document.body.appendChild(this.app.view);
 
-        this.options.assets.reduce((loader, [ name, src ]) => 
-            loader.add(name, src), this.app.loader
-        )
+        this.app.loader.add(this.options.assets)
         .load(() => {
             if (this.options.scenes.length) this.registerScenes();
             this.options?.onInit(this);
@@ -49,15 +47,14 @@ export default class Engine<S extends string, A extends string> {
     }
 
     normalizeScreen() {
-        const styles = `
-        <style>
+        const styles = document.createElement('style');
+        styles.textContent = `
             * {
                 padding: 0;
                 margin: 0;
                 box-sizing: border-box;
             }
-        </style>
         `;
-        document.body.innerHTML += styles;
+        document.body.appendChild(styles);
     }
 }
