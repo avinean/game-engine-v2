@@ -1,5 +1,5 @@
 import { Application, Container, Loader, Sprite } from 'pixi.js';
-import { AssetsEnum } from '../models/enums/AssetsEnum';
+import { AssetsEnum } from '../circles/models/enums/AssetsEnum';
 import ApplicationOptions from './models/ApplicationOptions';
 import SceneInterface from './models/interfaces/SceneInterface';
 import SceneConfig from './models/SceneConfig';

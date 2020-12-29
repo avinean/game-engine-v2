@@ -1,5 +1,5 @@
 import { Container, Sprite } from "pixi.js";
-import Engine from "./engine/Engine";
+import Engine from "../engine/Engine";
 import { AssetsEnum } from "./models/enums/AssetsEnum";
 import { ScenesEnum } from "./models/enums/ScenesEnum";
 import MainScene from "./scenes/MainScene";
