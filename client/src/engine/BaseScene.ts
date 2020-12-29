@@ -2,13 +2,13 @@ import { Application, Container } from "pixi.js";
 import Engine from "../engine/Engine";
 import SceneInterface from "../engine/models/interfaces/SceneInterface";
 
-export default class BaseScene<S extends string, A extends string>
-    implements SceneInterface<S , A> {
+export default class BaseScene<Scenes extends string, Assets extends string>
+    implements SceneInterface<Scenes , Assets> {
     instance = new Container;
     
     app: Application;
 
-    engine: Engine<S, A>;
+    engine: Engine<Scenes, Assets>;
 
     constructor() {
         this.instance = new Container;
@@ -48,7 +48,7 @@ export default class BaseScene<S extends string, A extends string>
         return this;
     }
 
-    setEngine(engine: Engine<S, A>) {
+    setEngine(engine: Engine<Scenes, Assets>) {
         this.engine = engine;
         return this;
     }

@@ -28,7 +28,7 @@ export default class Engine<S extends string, A extends string> {
         this.app.loader.add(this.options.assets)
         .load(() => {
             if (this.options.scenes.length) this.registerScenes();
-            this.options?.onInit(this);
+            this.options?.onInit?.(this);
         });
     }
 
