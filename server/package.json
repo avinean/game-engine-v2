@@ -5,6 +5,7 @@
         "build": "tsc",
         "prestart": "npm run build",
         "start": "node .",
+        "run": "tsc && node .",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "dependencies": {

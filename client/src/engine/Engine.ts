@@ -1,13 +1,14 @@
-import { Application, Container, Loader, Sprite } from 'pixi.js';
-import { AssetsEnum } from '../circles/models/enums/AssetsEnum';
+import { Application } from 'pixi.js';
+import ImageContainer from './ImageContainer';
 import ApplicationOptions from './models/ApplicationOptions';
-import SceneInterface from './models/interfaces/SceneInterface';
 import SceneConfig from './models/SceneConfig';
+import resizer from './Resizer';
 
 export default class Engine<S extends string, A extends string> {
     app: Application;
     options: ApplicationOptions<S, A>;
     scenes: Record<S, SceneConfig<S, A>> = {} as Record<S, SceneConfig<S, A>>;
+    resizer = resizer;
 
     constructor(options: ApplicationOptions<S, A> = { scenes: [], assets: [] }) {
         this.options = options;
@@ -15,7 +16,15 @@ export default class Engine<S extends string, A extends string> {
     }
 
     private init(): void {
-        const { applicationsConfig, normalizeScreen } = this.options;
+        const {
+            applicationsConfig,
+            normalizeScreen,
+            responsive,
+            assets,
+            background,
+            scenes,
+            onInit
+        } = this.options;
         this.app = new Application(applicationsConfig);
         this.app.renderer.view.style.position = "absolute";
         this.app.renderer.view.style.display = "block";
@@ -25,14 +34,25 @@ export default class Engine<S extends string, A extends string> {
 
         document.body.appendChild(this.app.view);
 
-        this.app.loader.add(this.options.assets)
+        this.app.loader.add(assets)
         .load(() => {
-            if (this.options.scenes.length) this.registerScenes();
-            this.options?.onInit?.(this);
+            if (background) this.registerBackground();
+            if (scenes.length) this.registerScenes();
+            if (responsive) this.registerResizer();
+            this.resizer.init();
+            onInit?.(this);
         });
     }
 
-    registerScenes() {
+    private registerBackground() {
+        const texture = this.app.loader.resources[
+            this.options?.background
+        ].texture;
+        const bg = new ImageContainer(texture);
+        this.app.stage.addChild(bg);
+    }
+
+    private registerScenes() {
         this.options.scenes.forEach(scene => {
             if (scene.isDefault) {
                 scene.instance = (new scene.scene())
@@ -46,7 +66,14 @@ export default class Engine<S extends string, A extends string> {
         });
     }
 
-    normalizeScreen() {
+    private registerResizer() {
+        this.resizer.add(({ width, height }) => {
+            this.app.stage.width = width;
+            this.app.stage.height = height;
+        });
+    }
+
+    private normalizeScreen() {
         const styles = document.createElement('style');
         styles.textContent = `
             * {

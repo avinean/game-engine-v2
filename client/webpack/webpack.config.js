@@ -1,6 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
   module: {
@@ -19,7 +20,12 @@ module.exports = {
     new HtmlWebpackPlugin(),
     new webpack.ProvidePlugin({
       PIXI: 'pixi.js'
-    })
+    }),
+    new CopyPlugin({
+      patterns: [
+        { from: "src/clicker/assets", to: "./" },
+      ],
+    }),
   ],
   watch: true,
   watchOptions: {

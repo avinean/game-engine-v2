@@ -8,9 +8,11 @@ new Engine({
         transparent: true,
     },
     normalizeScreen: true,
+    responsive: true,
     assets: [
-        { name: AssetsEnum.MainBackground, url: '../../src/clicker/assets/images/main.jpg'},
+        { name: AssetsEnum.MainBackground, url: '/clicker/images/main.jpg'},
     ],
+    background: AssetsEnum.MainBackground,
     scenes: [
         {
             name: ScenesEnum.MainScene,
@@ -18,4 +20,7 @@ new Engine({
             isDefault: true,
         },
     ],
+    onInit(app) {
+        
+    }
 });
