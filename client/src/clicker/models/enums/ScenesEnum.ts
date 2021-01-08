@@ -1,3 +1,4 @@
 export enum ScenesEnum {
-    MainScene = 'mainScene'
+    MainScene = 'mainScene',
+    PlayScene = 'palyScene'
 }

@@ -14,23 +14,21 @@ export default class ImageContainer extends Sprite {
         const { width: w1, height: h1 } = this.parent;
         const { width: w2, height: h2} = this.texture.baseTexture;
 
+        const imageRatio = w2 / h2;
         const hRatio = h1 / h2;
         const wRatio = w1 / w2;
 
-        console.log(this.parent)
-        console.log(this.texture.baseTexture);
-        console.log(hRatio);
-        console.log(wRatio);
-        if (wRatio > hRatio) {
-            console.log('more', w1, h2 / wRatio);
-            this.width = w1;
-            this.height = h2 * wRatio;
-        }
-        else {
-            console.log('less', w2 / hRatio, h1);
-            this.width = w2 * hRatio;
+        if (wRatio < hRatio) {
+            console.log('less', h1 * imageRatio, h1)
+            this.width = h1 * imageRatio;
             this.height = h1;
         }
+        else {
+            console.log('more', w1, w1 / imageRatio)
+            this.width = w1;
+            this.height = w1 / imageRatio;
+        }
+        console.log(this)
     }
 
 }

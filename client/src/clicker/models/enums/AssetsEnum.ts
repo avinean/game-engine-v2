@@ -1,3 +1,4 @@
 export enum AssetsEnum {
-    MainBackground = 'mainBackground'
+    MainBackground = 'mainBackground',
+    Button = 'button'
 }

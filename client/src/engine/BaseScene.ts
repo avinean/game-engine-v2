@@ -1,4 +1,4 @@
-import { Application, Container } from "pixi.js";
+import { Application, Container, Sprite } from "pixi.js";
 import Engine from "../engine/Engine";
 import SceneInterface from "../engine/models/interfaces/SceneInterface";
 
