@@ -1,7 +1,7 @@
 import { Container, Sprite, Text, TextStyle } from "pixi.js";
-import BaseScene from "../../engine/BaseScene"
-import { AssetsEnum } from "../models/enums/AssetsEnum";
-import { ScenesEnum } from "../models/enums/ScenesEnum";
+import BaseScene from "../../../engine/BaseScene"
+import { AssetsEnum } from "../../models/enums/AssetsEnum";
+import { ScenesEnum } from "../../models/enums/ScenesEnum";
 
 export default class MainScene extends BaseScene<ScenesEnum, AssetsEnum> {
     private btnWrapper: Container;

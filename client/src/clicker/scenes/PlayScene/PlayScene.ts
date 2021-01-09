@@ -1,7 +1,8 @@
 import { Container, Sprite, Text, TextStyle } from "pixi.js";
-import BaseScene from "../../engine/BaseScene"
-import { AssetsEnum } from "../models/enums/AssetsEnum";
-import { ScenesEnum } from "../models/enums/ScenesEnum";
+import BaseScene from "../../../engine/BaseScene"
+import StuffPanel from "../../components/StaffPanel/StaffPanell";
+import { AssetsEnum } from "../../models/enums/AssetsEnum";
+import { ScenesEnum } from "../../models/enums/ScenesEnum";
 
 export default class PlayScene extends BaseScene<ScenesEnum, AssetsEnum> {
     private els: {
@@ -19,6 +20,7 @@ export default class PlayScene extends BaseScene<ScenesEnum, AssetsEnum> {
     onInit() {
         this.createBalance();
         this.createButton();
+        this.createSideBar();
     }
 
     createButton() {
@@ -34,7 +36,7 @@ export default class PlayScene extends BaseScene<ScenesEnum, AssetsEnum> {
         this.els.button.on('click', () => {
             this.balance++;
         });
-        this.app.stage.addChild(this.els.button);
+        this.instance.addChild(this.els.button);
     }
 
     createBalance() {
@@ -43,14 +45,18 @@ export default class PlayScene extends BaseScene<ScenesEnum, AssetsEnum> {
         });
         this.els.balance = new Text(this.balanceStr, styles);
         this.els.balance.x = window.innerWidth - this.els.balance.width;
-        this.app.stage.addChild(this.els.balance);
-        console.log(this);
+        this.instance.addChild(this.els.balance);
     }
 
     balanceUpdated() {
         const { balance } = this.els;
         balance.text = this.balanceStr;
         balance.x = window.innerWidth - balance.width;
+    }
+
+    createSideBar() {
+        const sideBar = new StuffPanel;
+        this.instance.addChild(sideBar.instance);
     }
 
     get balanceStr() {
