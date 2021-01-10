@@ -1,4 +1,4 @@
-import { Container, Sprite, Text, TextStyle } from "pixi.js";
+import { Container, Sprite, Text, TextStyle, Texture } from "pixi.js";
 import BaseScene from "../../../engine/BaseScene"
 import StuffPanel from "../../components/StaffPanel/StaffPanell";
 import { AssetsEnum } from "../../models/enums/AssetsEnum";
@@ -17,10 +17,15 @@ export default class PlayScene extends BaseScene<ScenesEnum, AssetsEnum> {
         balance: 0
     }
 
+    private main: Container;
+    private sideBar: StuffPanel;
+
     onInit() {
+        this.createSideBar();
+        this.createMain();
         this.createBalance();
         this.createButton();
-        this.createSideBar();
+        console.log(this.main);
     }
 
     createButton() {
@@ -28,7 +33,7 @@ export default class PlayScene extends BaseScene<ScenesEnum, AssetsEnum> {
             this.app.loader.resources[AssetsEnum.Button].texture
         );
         this.els.button.anchor.set(0.5);
-        this.els.button.position.set(window.innerWidth / 2, window.innerHeight / 2);
+        this.els.button.position.set(this.main.width / 2, this.main.height / 2);
         this.els.button.width = 200;
         this.els.button.height = 200;
         this.els.button.buttonMode = true;
@@ -36,7 +41,7 @@ export default class PlayScene extends BaseScene<ScenesEnum, AssetsEnum> {
         this.els.button.on('click', () => {
             this.balance++;
         });
-        this.instance.addChild(this.els.button);
+        this.main.addChild(this.els.button);
     }
 
     createBalance() {
@@ -44,19 +49,35 @@ export default class PlayScene extends BaseScene<ScenesEnum, AssetsEnum> {
             fontSize: 40
         });
         this.els.balance = new Text(this.balanceStr, styles);
-        this.els.balance.x = window.innerWidth - this.els.balance.width;
-        this.instance.addChild(this.els.balance);
+        this.els.balance.x = window.innerWidth - this.sideBar.instance.width - this.els.balance.width;
+        this.main.addChild(this.els.balance);
     }
 
     balanceUpdated() {
-        const { balance } = this.els;
-        balance.text = this.balanceStr;
-        balance.x = window.innerWidth - balance.width;
+        this.els.balance.text = this.balanceStr;
+        this.els.balance.x = window.innerWidth - this.sideBar.instance.width - this.els.balance.width;
+        // TODO: find some information about best practices
+        // to avoid such horror
+        console.log(this.main.width, this.els.balance.width, this.els.balance.x)
+    }
+
+    createMain() {
+        this.main = new Container;
+        this.main.y = 0;
+        this.main.x = this.sideBar.instance.width;
+
+        const bg = new Sprite(Texture.WHITE);
+        bg.width = window.innerWidth - this.sideBar.instance.width;
+        bg.height = window.innerHeight;
+        bg.tint = 0xCCCCCC;
+
+        this.main.addChild(bg);
+        this.instance.addChild(this.main);
     }
 
     createSideBar() {
-        const sideBar = new StuffPanel;
-        this.instance.addChild(sideBar.instance);
+        this.sideBar = new StuffPanel;
+        this.instance.addChild(this.sideBar.instance);
     }
 
     get balanceStr() {

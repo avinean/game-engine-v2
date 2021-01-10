@@ -47,6 +47,7 @@ export default class StuffPanel {
 
     constructor() {
         this.createContainer();
+        this.createItems();
     }
 
     createContainer() {
@@ -62,9 +63,12 @@ export default class StuffPanel {
     }
 
     createItems() {
-        this.state.items.forEach(item => {
+        this.state.items.forEach(( item, i ) => {
             item.instance = new Sprite(item.texture);
-            // TODO: implement sidebar
+            item.instance.y = i * 100;
+            item.instance.width = 110;
+            item.instance.height = 90;
+            this.instance.addChild(item.instance);
         });
     }
 
