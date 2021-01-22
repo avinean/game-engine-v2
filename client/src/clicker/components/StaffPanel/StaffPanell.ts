@@ -13,6 +13,16 @@ interface State {
     items: Item[];
 }
 
+const config = {
+    panelWidth: 150,
+    itemWidth: 110,
+}
+
+const colors = {
+    inactive: 0x777777,
+    active: 0xffffff
+}
+
 export default class StuffPanel {
     instance: Container;
     state: State = {
@@ -45,9 +55,14 @@ export default class StuffPanel {
         ]
     };
 
+    private events: { [itemSelect: string]: Function[] } = {
+        itemSelect: []
+    };
+
     constructor() {
         this.createContainer();
         this.createItems();
+        console.log(this)
     }
 
     createContainer() {
@@ -56,20 +71,49 @@ export default class StuffPanel {
 
         const bg = new Sprite(Texture.WHITE);
         bg.height = window.innerHeight;
-        bg.width = 150;
+        bg.width = config.panelWidth;
         bg.tint = 0xEEEEEE;
 
         this.instance.addChild(bg);
     }
 
     createItems() {
-        this.state.items.forEach(( item, i ) => {
+        let y = 10;
+        const height = 90;
+        this.state.items.forEach( item => {
             item.instance = new Sprite(item.texture);
-            item.instance.y = i * 100;
-            item.instance.width = 110;
-            item.instance.height = 90;
+            item.instance.y = y;
+            item.instance.width = config.itemWidth;
+            item.instance.height = height;
+            item.instance.buttonMode = true;
+            item.instance.interactive = true;
+            item.instance.on('click', () => {
+                if (item.price > this.balance) return;
+                this.events.itemSelect.forEach(cb => {
+                    cb(item.price);
+                })
+            });
             this.instance.addChild(item.instance);
+
+            y += height;
         });
+
+        this.balance = this.state.balance;
+    }
+
+    updateItems() {
+        this.state.items.forEach(item => {
+            if (item.price > this.balance) {
+                item.instance.tint = colors.inactive;
+            } else {
+                item.instance.tint = colors.active;
+            }
+        });
+        console.log('updated')
+    }
+
+    onItemSelect(cb: Function) {
+        this.events.itemSelect.push(cb);
     }
 
     get balance() {
@@ -78,5 +122,6 @@ export default class StuffPanel {
 
     set balance(balance) {
         this.state.balance = balance;
+        this.updateItems();
     }
 }

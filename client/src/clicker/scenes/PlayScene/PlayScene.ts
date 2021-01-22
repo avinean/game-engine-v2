@@ -7,14 +7,17 @@ import { ScenesEnum } from "../../models/enums/ScenesEnum";
 export default class PlayScene extends BaseScene<ScenesEnum, AssetsEnum> {
     private els: {
         balance: Text,
-        button: Sprite
+        button: Container,
+        salary: Text
     } = {
         balance: null,
-        button: null
+        button: null,
+        salary: null
     };
 
     private data = {
-        balance: 0
+        balance: 0,
+        salary: 1
     }
 
     private main: Container;
@@ -25,24 +28,43 @@ export default class PlayScene extends BaseScene<ScenesEnum, AssetsEnum> {
         this.createMain();
         this.createBalance();
         this.createButton();
+        this.createSalary();
         console.log(this.main);
     }
 
     createButton() {
-        this.els.button = new Sprite(
-            this.app.loader.resources[AssetsEnum.Button].texture
-        );
-        this.els.button.anchor.set(0.5);
+        this.els.button = new Container();
         this.els.button.position.set(this.main.width / 2, this.main.height / 2);
-        this.els.button.width = 200;
-        this.els.button.height = 200;
         this.els.button.buttonMode = true;
         this.els.button.interactive = true;
         this.els.button.on('click', () => {
-            this.balance++;
+            this.balance = this.balance + this.salary;
         });
+
+        const btn = new Sprite(
+            this.app.loader.resources[AssetsEnum.Button].texture
+        );
+        btn.width = 200;
+        btn.height = 200;
+        btn.anchor.set(0.5);
+        this.els.button.addChild(btn);
+
         this.main.addChild(this.els.button);
     }
+
+    createSalary() {
+        const styles = new TextStyle({
+            fontSize: 40
+        });
+        this.els.salary = new Text(this.salaryStr, styles);
+        this.els.salary.anchor.set(0.5);
+        this.els.button.addChild(this.els.salary);
+    }
+    
+    salaryUpdated() {
+        this.els.salary.text = this.salaryStr;
+    }
+
 
     createBalance() {
         const styles = new TextStyle({
@@ -58,7 +80,7 @@ export default class PlayScene extends BaseScene<ScenesEnum, AssetsEnum> {
         this.els.balance.x = window.innerWidth - this.sideBar.instance.width - this.els.balance.width;
         // TODO: find some information about best practices
         // to avoid such horror
-        console.log(this.main.width, this.els.balance.width, this.els.balance.x)
+        this.sideBar.balance = this.balance;
     }
 
     createMain() {
@@ -77,11 +99,16 @@ export default class PlayScene extends BaseScene<ScenesEnum, AssetsEnum> {
 
     createSideBar() {
         this.sideBar = new StuffPanel;
+        this.sideBar.onItemSelect((price: number) => {
+            this.balance = this.balance - price;
+            this.salary = this.salary + price;
+            this.sideBar.balance = this.balance;
+        });
         this.instance.addChild(this.sideBar.instance);
     }
 
     get balanceStr() {
-        return `Balance: ${this.data.balance} $`;
+        return `Balance: ${this.data.balance / 100} $`;
     }
 
     get balance(): number {
@@ -91,5 +118,22 @@ export default class PlayScene extends BaseScene<ScenesEnum, AssetsEnum> {
     set balance(balance: number) {
         this.data.balance = balance;
         this.balanceUpdated();
+    }
+
+    get salaryStr() {
+        if (this.data.salary > 100000) {
+            const salary = Math.floor(this.data.salary / 100000);
+            return `${salary}K $`;
+        }
+        return `${this.data.salary / 100} $`;
+    }
+
+    get salary(): number {
+        return this.data.salary;
+    }
+
+    set salary(salary: number) {
+        this.data.salary = salary;
+        this.salaryUpdated();
     }
 }
