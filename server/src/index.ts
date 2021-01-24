@@ -13,6 +13,16 @@ app.get( "/", ( req, res ) => {
 // // define a route handler for the default home page
 app.get( "/clicker", ( req, res ) => {
     res.sendFile(path.join(__dirname + '/../client/clicker/index.html'));
+} )
+
+// // define a route handler for the default home page
+app.get( "/cursors", ( req, res ) => {
+    res.sendFile(path.join(__dirname + '/../client/cursors/index.html'));
+} );
+
+// // define a route handler for the default home page
+app.get( "/circles", ( req, res ) => {
+    res.sendFile(path.join(__dirname + '/../client/circles/index.html'));
 } );
 
 // start the Express server

@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "circles": "npx webpack --config webpack/webpack.config.js --entry ./src/circles/main.ts --output-path ./dist/circles --watch --progress",
-    "clicker": "npx webpack --config webpack/webpack.config.js --entry ./src/clicker/main.ts --output-path ../server/client/clicker --watch --progress"
+    "project": "npx webpack --config webpack/webpack.config.js --watch --progress --name"
   },
   "author": "",
   "license": "ISC",

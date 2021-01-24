@@ -1,36 +1,23 @@
-const path = require('path');
-const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const base = require('./base.config');
 const CopyPlugin = require("copy-webpack-plugin");
+const path = require('path');
+
+const index = process.argv.indexOf('--name');
+const name = process.argv[index + 1];
 
 module.exports = {
-  module: {
-    rules: [
-      {
-        test: /\.tsx?$/,
-        use: 'ts-loader',
-        exclude: /node_modules/,
-      },
-    ],
-  },
-  resolve: {
-    extensions: [ '.tsx', '.ts', '.js' ],
+  ...base,
+  name,
+  entry: `./src/${name}/main.ts`,
+  output: {
+    path: path.resolve(__dirname, `../../server/client/${name}`)
   },
   plugins: [
-    new HtmlWebpackPlugin(),
-    new webpack.ProvidePlugin({
-      PIXI: 'pixi.js'
-    }),
+    ...base.plugins,
     new CopyPlugin({
       patterns: [
-        { from: "src/clicker/assets", to: "./" },
+        { from: `src/${name}/assets`, to: "./" },
       ],
     }),
   ],
-  watch: true,
-  watchOptions: {
-    ignored: /node_modules/,
-  },
-  devtool: 'inline-source-map',
 };
-
