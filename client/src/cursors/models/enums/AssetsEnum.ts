@@ -1,3 +1,6 @@
 export enum AssetsEnum {
-    StarPic = 'starPic'
+    StarPic = 'starPic',
+    HeartPic = 'heartPic',
+    DollarPic = 'dollarPic',
+    TriPic = 'triPic'
 }
